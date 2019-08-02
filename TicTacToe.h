@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 class TTT {
@@ -89,6 +90,15 @@ class TTT {
 			}
 		}
 
+		void levelOneBot() {
+			unordered_map<int, int> usedSpaces;
+			int square;
 
+			boardOutput();
+			cout << "Player One: Make your turn by selecting the square you wish to play on\n";
+			cin >> square;
+			cout << '\n';
+			turn(square - 1, 1);
+		}
 
 };
