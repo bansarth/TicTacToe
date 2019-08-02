@@ -59,31 +59,58 @@ class TTT {
 		}
 
 		void twoPlayerMode() {
+			vector<int> remainingMoves;
+			remainingMoves.resize(9);
+			for(int i = 0; i < 9; ++i){
+				remainingMoves[i] = i;
+			}
 			int square;
 			char result;
 			while (true) {
 				boardOutput();
 				cout << "Player One: Make your turn by selecting the square you wish to play on\n";
 				cin >> square;
+				while(square < 1 || square > 9 || remainingMoves[square - 1] != square - 1){
+					cout << "This is not a valid move. Please reselect another square Player One.\n";
+					boardOutput();
+					cin >> square;
+				}
+				remainingMoves.erase(remainingMoves.begin() + square - 2);
 				cout << '\n';
 				turn(square - 1, 1);
-
-				result = checkForWin();
-				if (result == 'X') {
+				
+				
+				if (checkForWin() == 'X') {
 					boardOutput();
 					cout << "Player One Wins!\n";
+					break;
+				}
+				else if(remaingMoves.size() == 0){
+					boardOutput();
+					cout << "This match is a draw.\n";
 					break;
 				}
 
 				boardOutput();
 				cout << "Player Two: Make your turn by selecting the square you wish to play on\n";
 				cin >> square;
+				while(square < 1 || square > 9 || remainingMoves[square - 1] != square - 1){
+					cout << "This is not a valid move. Please reselect another square Player Two.\n";
+					boardOutput();
+					cin >> square;
+				}
+				remainingMoves.erase(remainingMoves.begin() + square - 2);
 				cout << '\n';
 				turn(square - 1, 2);
 
-				result = checkForWin();
-				if (result == 'O') {
+				if (checkForWin() == 'O') {
+					boardOutput();
 					cout << "Player Two Wins!\n";
+					break;
+				}
+				else if(remaingMoves.size() == 0){
+					boardOutput();
+					cout << "This match is a draw.\n";
 					break;
 				}
 			}
