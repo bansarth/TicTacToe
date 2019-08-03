@@ -62,6 +62,36 @@ class TTT {
 			}
 		}
 
+		char checkForWinBot2(vector<char> &cboard) {
+			if (cboard[0] == cboard[1] && cboard[1] == cboard[2]) {
+				return cboard[0];
+			}
+			else if (cboard[3] == cboard[4] && cboard[4] == cboard[5]) {
+				return cboard[3];
+			}
+			else if (cboard[6] == cboard[7] && cboard[7] == cboard[8]) {
+				return cboard[6];
+			}
+			else if (cboard[0] == cboard[3] && cboard[3] == cboard[6]) {
+				return cboard[0];
+			}
+			else if (cboard[1] == cboard[4] && cboard[4] == cboard[7]) {
+				return cboard[1];
+			}
+			else if (cboard[2] == cboard[5] && cboard[5] == cboard[8]) {
+				return cboard[2];
+			}
+			else if (cboard[0] == cboard[4] && cboard[4] == cboard[8]) {
+				return cboard[4];
+			}
+			else if (cboard[2] == cboard[4] && cboard[4] == cboard[6]) {
+				return cboard[4];
+			}
+			else {
+				return 'N';
+			}
+		}
+
 		void twoPlayerMode() {
 			vector<int> remainingMoves;
 			remainingMoves.resize(9);
@@ -175,6 +205,68 @@ class TTT {
 			}
 		}
 
+		int minMax(vector<char> currentBoard, vector<int> remMoves, int depth, bool isPlayerOne) {
+			char digits[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+			if (checkForWinBot2(currentBoard) == 'X') return -10;
+			else if (checkForWinBot2(currentBoard) == 'O') return 10;
+			else if (adjacent_find(remMoves.begin(), remMoves.end(), not_equal_to<>()) == remMoves.end()) {
+				return 0;
+			}
+
+			if (!isPlayerOne) {
+				int bestVal = -100;
+				for (int i = 0; i < 9; ++i) {
+					if (remMoves[i] != -1) {
+						currentBoard[i] = 'O';
+						remMoves[i] = -1;
+						int value = minMax(currentBoard, remMoves, depth + 1, true);
+						currentBoard[i] = digits[i];
+						remMoves[i] = i;
+						bestVal = max(bestVal, value - depth);
+					}
+				}
+				return bestVal;
+			}
+			else {
+				int bestVal = 100;
+				for (int i = 0; i < 9; ++i) {
+					if (remMoves[i] != -1) {
+						currentBoard[i] = 'X';
+						remMoves[i] = -1;
+						int value = minMax(currentBoard, remMoves, depth + 1, false);
+						currentBoard[i] = digits[i];
+						remMoves[i] = i;
+						bestVal = min(bestVal, value + depth);
+					}
+				}
+				return bestVal;
+			}
+
+		}
+
+		int getBestMove(vector<int> rMoves) {
+			int best_val = -100;
+			int bestMove;
+			char digits[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+			vector<char> currentBoard = board;
+			for (int i = 0; i < 9; ++i) {
+				if (rMoves[i] != -1) {
+					rMoves[i] = -1;
+					currentBoard[i] = 'O';
+					int value = minMax(currentBoard, rMoves, 0, true);
+					rMoves[i] = i;
+					currentBoard[i] = digits[i];
+
+					if (value > best_val) {
+						bestMove = i;
+						best_val = value;
+					}
+				}
+			}
+			return bestMove;
+		}
+
 		void levelTwoBot() {
 			vector<int> remainingMoves;
 			remainingMoves.resize(9);
@@ -209,7 +301,10 @@ class TTT {
 
 				boardOutput();
 				cout << "The bot will make its move now.\n";
-
+				square = getBestMove(remainingMoves);
+				remainingMoves[square] = -1;
+				cout << '\n';
+				turn(square, 2);
 			}
 		}
 
