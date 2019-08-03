@@ -305,6 +305,17 @@ class TTT {
 				remainingMoves[square] = -1;
 				cout << '\n';
 				turn(square, 2);
+
+				if (checkForWin() == 'O') {
+					boardOutput();
+					cout << "he Bot Wins!\n";
+					break;
+				}
+				else if (adjacent_find(remainingMoves.begin(), remainingMoves.end(), not_equal_to<>()) == remainingMoves.end()) {
+					boardOutput();
+					cout << "This match is a draw.\n";
+					break;
+				}
 			}
 		}
 
